@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yudianxx.springBootDemo.mapper.UserMapper" >
-    <select id="selectByPrimaryKey" resultType="com.yudianxx.springBootDemo.model.image.Image"  >
-      SELECT userid as id,realName as userName  FROM cg_user where  userId = #{userId}
+<mapper namespace="com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper">
+    <select id="getCompletePicture" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+        SELECT
+        ti.title,
+        ti.image_link AS imageLink,
+        tm.NAME AS modelName,
+        tc.NAME AS collectionName,
+        tca.NAME AS catogoryName
+        FROM
+        t_images ti
+        LEFT JOIN t_model tm ON ti.model_id = tm.id
+        LEFT JOIN t_collection tc ON ti.collection = tc.id
+        LEFT JOIN t_category tca ON tca.id = ti.category
+        WHERE
+        1 =1
+        <if test="modelName != null">
+            AND tm.NAME=#{modelName}
+        </if>
+        <if test="CategoryName != null">
+            AND tca.NAME=#{CategoryName}
+        </if>
+        <if test="CollectionName != null">
+            AND tc.NAME=#{CollectionName}
+        </if>
+
     </select>
 </mapper>

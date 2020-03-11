@@ -1,20 +1,26 @@
 package com.yudianxx.springBootDemo.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.yudianxx.springBootDemo.model.PageObject;
 import com.yudianxx.springBootDemo.model.User;
+import com.yudianxx.springBootDemo.model.image.ImageCollection;
+import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import com.yudianxx.springBootDemo.service.MeiztuPictureService;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.math.raw.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/meizitu")
@@ -34,22 +40,27 @@ public class MeiZiPictureController {
     }
 
 
-    @RequestMapping("/getImagesTest")
-    public Object getImagesTest(){
-        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = 
+    @RequestMapping("/getCompleteImages")
+    public PageInfo getImagesTest(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
+
+        return meiziTuPictureResponseVoList;
 
     }
-
 
     @RequestMapping("/getAllMoedel")
-    public Object findAllmodel(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
-        PageInfo pageInfo = meiztuPictureService.getAllModels(meiziTuPictureRequestVo);
-        return pageInfo;
+    public List findAllmodel(@RequestBody Model model) {
+        List<Model> modelList = meiztuPictureService.getAllModels(model);
+        return modelList;
+
     }
 
-    @RequestMapping("/getAllModelName")
-    public JSONObject getModelByName(){
-        return null;
+    @RequestMapping("/getAllCollection")
+    public JSONObject getAllCollection(@RequestBody ImageCollection imageCollection) {
+        List<ImageCollection> imageCollectionList = meiztuPictureService.getAllImageCollection(imageCollection);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("imageCollectionList", imageCollectionList);
+        return jsonObject;
     }
 
 }

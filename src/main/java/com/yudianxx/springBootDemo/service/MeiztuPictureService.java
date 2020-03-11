@@ -6,7 +6,6 @@ import com.yudianxx.springBootDemo.model.image.Image;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
-import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public interface MeiztuPictureService {
     PageInfo getAllModels(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
 
-    List<MeiziTuPictureResponseVo> getImagesTest();
+    PageInfo getImagesTest(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
     List<Model> getAllModels(Model model);
 

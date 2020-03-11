@@ -3,7 +3,7 @@ package com.yudianxx.springBootDemo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.yudianxx.springBootDemo.mapper.image.CollectiomMapper;
+import com.yudianxx.springBootDemo.mapper.image.CollectionMapper;
 import com.yudianxx.springBootDemo.mapper.image.ImageCategoryMapper;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
 import com.yudianxx.springBootDemo.mapper.image.ModelMapper;
@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,23 +40,19 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     ImageCategoryMapper imageCategoryMapper;
 
     @Autowired
-    CollectiomMapper collectiomMapper;
+    CollectionMapper collectionMapper;
 
 
-    public List<MeiziTuPictureResponseVo> getImagesTest() {
+    public PageInfo getImagesTest(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
 
-        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
-
-        MeiziTuPictureResponseVo meiziTuPictureResponseVo = new MeiziTuPictureResponseVo();
-
-        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>().last("limit 10"));
-        for (Image image : imageList){
+        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = imageHandleMapper.getCompletePicture(meiziTuPictureRequestVo);
 
 
+        //分页
+        PageHelper.startPage(meiziTuPictureRequestVo.getPageNum(), meiziTuPictureRequestVo.getPageSize());
+        PageInfo pageInfo = new PageInfo(meiziTuPictureResponseVoList);
 
-        }
-
-            return meiziTuPictureResponseVoList;
+        return pageInfo;
 
 
     }
@@ -78,11 +73,11 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
 
     @Override
     public List<Model> getAllModels(Model model) {
-        QueryWrapper<Model> queryWrapper = new QueryWrapper<Model>();
-        if (model.getId() != null) {
-            queryWrapper.lambda().eq(Model::getId, model.getId());
+        QueryWrapper<Model> modelQueryWrapper = new QueryWrapper<>();
+        if (model != null && StringUtils.isNotBlank(model.getName())) {
+            modelQueryWrapper.lambda().eq(Model::getName, model.getName());
         }
-        List<Model> modelList = modelMapper.selectList(queryWrapper);
+        List<Model> modelList = modelMapper.selectList(modelQueryWrapper);
         return modelList;
     }
 
@@ -99,11 +94,14 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
 
     @Override
     public List<ImageCollection> getAllImageCollection(ImageCollection imageCollection) {
-        QueryWrapper<ImageCollection> imageCollectionQueryWrapper = new QueryWrapper<>();
-        if (imageCollection.getId() != null) {
-//            imageCollectionQueryWrapper.lambda();
+        QueryWrapper<ImageCollection> collectionQueryWrapper = new QueryWrapper<>();
+        if (imageCollection != null && imageCollection.getId() != null) {
+            collectionQueryWrapper.lambda().eq(ImageCollection::getId, imageCollection.getId());
         }
-        return null;
+
+        List<ImageCollection> imageCollectionList = collectionMapper.selectList(collectionQueryWrapper);
+
+        return imageCollectionList;
     }
 
 

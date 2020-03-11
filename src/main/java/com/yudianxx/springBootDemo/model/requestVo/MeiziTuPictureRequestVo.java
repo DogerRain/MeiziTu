@@ -12,4 +12,5 @@ import lombok.Data;
 public class MeiziTuPictureRequestVo extends PageObject {
     String modelName;
     String CategoryName;
+    String CollectionName;
 }
