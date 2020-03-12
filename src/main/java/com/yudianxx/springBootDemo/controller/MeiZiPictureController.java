@@ -7,6 +7,9 @@ import com.yudianxx.springBootDemo.model.User;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
+import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
+import com.yudianxx.springBootDemo.model.responseVo.RetResponse;
+import com.yudianxx.springBootDemo.model.responseVo.RetResult;
 import com.yudianxx.springBootDemo.service.MeiztuPictureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -56,5 +60,17 @@ public class MeiZiPictureController {
         jsonObject.put("imageCollectionList", imageCollectionList);
         return jsonObject;
     }
+
+    @RequestMapping("/getRandomPictures")
+    public RetResult getRandomPictures() throws Exception {
+        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
+        try {
+            meiziTuPictureResponseVoList = meiztuPictureService.getRandomPictures();
+        } catch (Exception e) {
+            RetResponse.makeErrRsp("内部错误");
+        }
+        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
+    }
+
 
 }

@@ -3,6 +3,7 @@
 <mapper namespace="com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper">
     <select id="getCompletePicture" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
         SELECT
+        ti.id as imageId,
         ti.title,
         ti.image_link AS imageLink,
         tm.NAME AS modelName,
@@ -26,4 +27,58 @@
         </if>
 
     </select>
+
+    <select id="getrandomPictureByCount"
+            resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+     SELECT ti.id as imageId,
+        ti.title,
+        ti.image_link AS imageLink,
+        tm.NAME AS modelName,
+        tc.NAME AS collectionName,
+        tca.NAME AS catogoryName
+        FROM
+        t_images ti
+        LEFT JOIN t_model tm ON ti.model_id = tm.id
+        LEFT JOIN t_collection tc ON ti.collection = tc.id
+        LEFT JOIN t_category tca ON tca.id = ti.category
+        WHERE
+        1 =1
+				AND tm.id = #{modelid}
+				AND ti.id >=
+				FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid}))
+				LIMIT #{count};
+    </select>
+
+    <select id="getCompletePictureNotinclude"
+            resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo"
+            parameterType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+        SELECT
+        ti.id as imageId,
+        ti.title,
+        ti.image_link AS imageLink,
+        tm.NAME AS modelName,
+        tc.NAME AS collectionName,
+        tca.NAME AS catogoryName
+        FROM
+        t_images ti
+        LEFT JOIN t_model tm ON ti.model_id = tm.id
+        LEFT JOIN t_collection tc ON ti.collection = tc.id
+        LEFT JOIN t_category tca ON tca.id = ti.category
+        WHERE
+        1 =1
+
+        <if test="meiziTuPictureResponseVoList.size() > 0">
+            and ti.id not in
+            <foreach item="item" index="index" collection="meiziTuPictureResponseVoList"
+                     open="(" separator="," close=")">
+                #{item.imageId}
+            </foreach>
+        </if>
+        AND ti.id >= FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images))
+        LIMIT #{count}
+
+
+    </select>
+
+
 </mapper>

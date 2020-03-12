@@ -6,6 +6,7 @@ import com.yudianxx.springBootDemo.model.image.Image;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
+import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 
 import java.util.List;
 
@@ -29,5 +30,8 @@ public interface MeiztuPictureService {
 
 
     List<ImageCollection> getAllImageCollection(ImageCollection imageCollection);
+
+
+    List<MeiziTuPictureResponseVo> getRandomPictures();
 
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @TableName("t_model")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Model implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
