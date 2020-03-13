@@ -7,7 +7,7 @@ package com.yudianxx.springBootDemo.model.responseVo;
  */
 public class RetResponse {
     public final static String SUCCESS = "success";
-    public final static String FAIL = "fail";
+    public final static String FAIL = "服务器出错了，请稍后重试";
 
     public static <T> RetResult<T> makeOKRsp() {
         return new RetResult<T>().setCode(RetCode.SUCCESS).setMsg(SUCCESS);
@@ -18,7 +18,7 @@ public class RetResponse {
     }
 
     public static <T> RetResult<T> makeErrRsp(String message) {
-        return new RetResult<T>().setCode(RetCode.FAIL).setMsg(FAIL);
+        return new RetResult<T>().setCode(RetCode.FAIL).setMsg(message);
     }
 
     public static <T> RetResult<T> makeRsp(int code, String msg) {

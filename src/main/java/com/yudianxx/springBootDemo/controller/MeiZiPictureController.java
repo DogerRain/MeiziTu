@@ -39,10 +39,17 @@ public class MeiZiPictureController {
 
 
     @RequestMapping("/getCompleteImages")
-    public PageInfo getImagesTest(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+    public RetResult getImagesTest(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
         PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
+        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
 
-        return meiziTuPictureResponseVoList;
+    }
+
+    @RequestMapping("/getCompleteImagesTest")
+    public RetResult getImagesTest() {
+        MeiziTuPictureRequestVo meiziTuPictureRequestVo = new MeiziTuPictureRequestVo();
+        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
+        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
 
     }
 
@@ -54,11 +61,9 @@ public class MeiZiPictureController {
     }
 
     @RequestMapping("/getAllCollection")
-    public JSONObject getAllCollection(@RequestBody ImageCollection imageCollection) {
+    public RetResult getAllCollection(@RequestBody ImageCollection imageCollection) {
         List<ImageCollection> imageCollectionList = meiztuPictureService.getAllImageCollection(imageCollection);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("imageCollectionList", imageCollectionList);
-        return jsonObject;
+        return RetResponse.makeOKRsp(imageCollectionList);
     }
 
     @RequestMapping("/getRandomPictures")
