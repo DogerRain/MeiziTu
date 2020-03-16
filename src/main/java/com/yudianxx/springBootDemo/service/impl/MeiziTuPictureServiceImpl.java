@@ -50,7 +50,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     CollectionMapper collectionMapper;
 
 
-    public PageInfo getImagesTest(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+    public PageInfo getCompleteImages(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
 
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = imageHandleMapper.getCompletePicture(meiziTuPictureRequestVo);
 
@@ -81,8 +81,8 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     @Override
     public List<Model> getAllModels(Model model) {
         QueryWrapper<Model> modelQueryWrapper = new QueryWrapper<>();
-        if (model != null && StringUtils.isNotBlank(model.getName())) {
-            modelQueryWrapper.lambda().eq(Model::getName, model.getName());
+        if (model != null && model.getId() != null) {
+            modelQueryWrapper.lambda().eq(Model::getId, model.getId());
         }
         List<Model> modelList = modelMapper.selectList(modelQueryWrapper);
         return modelList;
@@ -120,7 +120,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         List<MeiziTuPictureResponseVo> listResponse = new ArrayList<>();
 
         /**
-         * 获取随机妹子的图片
+         * 获取随机Model的图片
          */
         for (Model model : modelList) {
             List<MeiziTuPictureResponseVo> list = imageHandleMapper.getrandomPictureByCount(model.getId(), constantUtils.IMAGES_RANDOM_COUNT);
@@ -137,13 +137,13 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     }
 
     /**
-     * 获取随机妹子id
+     * 获取随机Modelid
      *
      * @return
      */
     public List<Model> getRandomModel() {
         List<Model> modelList = modelMapper.getRandomModelCount(constantUtils.MODEL_RANDOM_COUNT);
-        log.info("随机妹子id：{}", modelList);
+        log.info("随机Modelid：{}", modelList);
         return modelList;
     }
 

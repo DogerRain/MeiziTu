@@ -10,7 +10,10 @@ import lombok.Data;
  */
 @Data
 public class MeiziTuPictureRequestVo extends PageObject {
+    String modelId;
     String modelName;
-    String CategoryName;
-    String CollectionName;
+    String categoryId;
+    String categoryName;
+    String collectionId;
+    String collectionName;
 }

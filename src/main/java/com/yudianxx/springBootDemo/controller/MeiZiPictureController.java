@@ -32,32 +32,46 @@ public class MeiZiPictureController {
     @RequestMapping("/test")
 //    public Object test(@RequestBody User user) {
     public Object test() {
-//        log.info("小程序接口调入");
+        log.info("小程序接口调入测试");
         User user1 = User.builder().age(25).userName("以太网").password("123").build();
         return JSONObject.toJSON(user1);
     }
 
+    /**
+     * @param
+     * @return
+     * @Desc 随机返回5个collection的精选图片
+     */
+    @RequestMapping("/getBannerImages")
+    public RetResult getBannerImages() {
 
+        return RetResponse.makeOKRsp();
+    }
+
+    /**
+     * @param meiziTuPictureRequestVo
+     * @return
+     * @Desc 根据model id ， collection id ,category id  筛选获取图片信息，分页
+     */
     @RequestMapping("/getCompleteImages")
     public RetResult getImagesTest(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
-        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
+        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getCompleteImages(meiziTuPictureRequestVo);
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
 
     }
 
-    @RequestMapping("/getCompleteImagesTest")
-    public RetResult getImagesTest() {
-        MeiziTuPictureRequestVo meiziTuPictureRequestVo = new MeiziTuPictureRequestVo();
-        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
-        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
-
-    }
+//    @RequestMapping("/getCompleteImagesTest")
+//    public RetResult getImagesTest() {
+//        MeiziTuPictureRequestVo meiziTuPictureRequestVo = new MeiziTuPictureRequestVo();
+//        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
+//        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
+//
+//    }
 
     @RequestMapping("/getAllMoedel")
-    public List findAllmodel(@RequestBody Model model) {
+    public RetResult findAllmodel(@RequestBody Model model) {
         List<Model> modelList = meiztuPictureService.getAllModels(model);
-        return modelList;
-
+        return RetResponse.makeOKRsp(modelList);
     }
 
     @RequestMapping("/getAllCollection")

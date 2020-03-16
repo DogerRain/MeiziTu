@@ -19,7 +19,7 @@ public interface MeiztuPictureService {
     PageInfo getAllModels(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
 
-    PageInfo getImagesTest(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
+    PageInfo getCompleteImages(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
     List<Model> getAllModels(Model model);
 

@@ -16,14 +16,14 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-        <if test="modelName != null">
-            AND tm.NAME=#{modelName}
+        <if test="modelId != null">
+            AND tm.id=#{modelId}
         </if>
-        <if test="CategoryName != null">
-            AND tca.NAME=#{CategoryName}
+        <if test="categoryId != null">
+            AND tca.id=#{categoryId}
         </if>
-        <if test="CollectionName != null">
-            AND tc.NAME=#{CollectionName}
+        <if test="collectionId != null">
+            AND tc.id=#{collectionId}
         </if>
 
     </select>
