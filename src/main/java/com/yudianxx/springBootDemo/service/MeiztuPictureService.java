@@ -34,4 +34,12 @@ public interface MeiztuPictureService {
 
     List<MeiziTuPictureResponseVo> getRandomPictures();
 
+    Model testTransactional() throws Exception;
+
+    void a(Model model);
+
+    void b(Model model);
+
+    void c(Model model);
+
 }

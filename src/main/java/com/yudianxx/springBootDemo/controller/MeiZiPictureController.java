@@ -3,6 +3,7 @@ package com.yudianxx.springBootDemo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.yudianxx.springBootDemo.model.User;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
@@ -91,5 +92,9 @@ public class MeiZiPictureController {
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
     }
 
+    @RequestMapping("/TestTransactional")
+    public RetResult TestTransactional() throws Exception {
+        return RetResponse.makeOKRsp(meiztuPictureService.testTransactional());
+    }
 
 }

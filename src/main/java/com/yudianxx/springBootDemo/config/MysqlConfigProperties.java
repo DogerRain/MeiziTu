@@ -1,14 +1,31 @@
 package com.yudianxx.springBootDemo.config;
 
+import com.alibaba.druid.filter.Filter;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.support.http.StatViewServlet;
+import com.alibaba.druid.support.http.WebStatFilter;
+import com.alibaba.druid.wall.WallConfig;
+import com.alibaba.druid.wall.WallFilter;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * 读取数据库配置文件
  *
- * @author zita
+ * @author hyw
  */
 @Data
+@Slf4j
 @ConfigurationProperties(prefix = "spring.datasource")
 public class MysqlConfigProperties {
 
@@ -46,10 +63,10 @@ public class MysqlConfigProperties {
 
     private String logSlowSql;
 
-  /*  @Bean
+   /* @Bean
     public DataSource druidDataSource() {
         DruidDataSource datasource = new DruidDataSource();
-        datasource.setUrl(dbUrl);
+        datasource.setUrl(url);
         datasource.setUsername(username);
         datasource.setPassword(password);
         datasource.setDriverClassName(driverClassName);
@@ -73,41 +90,8 @@ public class MysqlConfigProperties {
             log.error("druid configuration initialization filter", e);
         }
         return datasource;
-    }
-
-    @Bean
-    public WallFilter wallFilter() {
-        WallFilter wallFilter = new WallFilter();
-        wallFilter.setConfig(wallConfig());
-        return wallFilter;
-    }
-
-    @Bean
-    public WallConfig wallConfig() {
-        WallConfig config = new WallConfig();
-        //允许一次执行多条语句
-        config.setMultiStatementAllow(true);
-        //允许非基本语句的其他语句
-        config.setNoneBaseStatementAllow(true);
-        return config;
-    }
-
-    @Bean
-    public ServletRegistrationBean druidServlet() {
-        ServletRegistrationBean reg = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
-        reg.addInitParameter("loginUsername", "admin");
-        reg.addInitParameter("loginPassword", "admin");
-        reg.addInitParameter("logSlowSql", logSlowSql);
-        return reg;
-    }
-
-    @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new WebStatFilter());
-        filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
-        filterRegistrationBean.addInitParameter("profileEnable", "true");
-        return filterRegistrationBean;
     }*/
+
+
 
 }
