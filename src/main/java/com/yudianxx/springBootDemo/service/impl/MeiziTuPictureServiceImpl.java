@@ -123,6 +123,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         List<Model> modelList = getRandomModel();
 
         List<MeiziTuPictureResponseVo> listResponse = new ArrayList<>();
+        log.info("怎么就不执行了呢");
 
         /**
          * 获取随机Model的图片

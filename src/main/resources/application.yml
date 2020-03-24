@@ -12,7 +12,8 @@ spring:
     minEvictableIdleTimeMillis: 30000
     timeBetweenEvictionRunsMillis: 60000
     max-active: 15
-    driverClassName: com.mysql.jdbc.Driver
+#    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     max-wait: 8000
     url: jdbc:mysql://localhost:3306/images?autoreconnect=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
