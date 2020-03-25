@@ -67,6 +67,8 @@ mybatis-plus:
   #      table-underline: false
   configuration:
     map-underscore-to-camel-case: true
+    # mybatis开启二级缓存标志
+    cache-enabled: false
 
 
 logging:
@@ -80,3 +82,4 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
