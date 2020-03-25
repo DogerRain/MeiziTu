@@ -6,8 +6,11 @@
         ti.id as imageId,
         ti.title,
         ti.image_link AS imageLink,
+        tm.id AS modelId,
         tm.NAME AS modelName,
         tc.NAME AS collectionName,
+        tc.id AS collectionId,
+        tca.id AS catogoryId,
         tca.NAME AS catogoryName
         FROM
         t_images ti
@@ -16,6 +19,9 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
+        <if test="imageId != null">
+            AND ti.id=#{imageId}
+        </if>
         <if test="modelId != null">
             AND tm.id=#{modelId}
         </if>
@@ -25,7 +31,41 @@
         <if test="collectionId != null">
             AND tc.id=#{collectionId}
         </if>
+        and ti.suggestion ="PASS"
+    </select>
 
+    <select id="getCompletesImagesByCondition" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+        SELECT
+        ti.id as imageId,
+        ti.title,
+        ti.image_link AS imageLink,
+        tm.id AS modelId,
+        tm.NAME AS modelName,
+        tc.NAME AS collectionName,
+        tc.id AS collectionId,
+        tca.id AS catogoryId,
+        tca.NAME AS catogoryName
+
+        FROM
+        t_images ti
+        LEFT JOIN t_model tm ON ti.model_id = tm.id
+        LEFT JOIN t_collection tc ON ti.collection = tc.id
+        LEFT JOIN t_category tca ON tca.id = ti.category
+        WHERE
+        1 =1
+        <if test="imageId != null">
+            AND ti.id=#{imageId}
+        </if>
+        <if test="modelId != null">
+            AND tm.id=#{modelId}
+        </if>
+        <if test="categoryId != null">
+            AND tca.id=#{categoryId}
+        </if>
+        <if test="collectionId != null">
+            AND tc.id=#{collectionId}
+        </if>
+        and ti.suggestion ="PASS"
     </select>
 
 
@@ -79,7 +119,7 @@
 				LIMIT #{count};
     </select>
 
-    <select id="getOneRandomPicturesByModeId" resultType="java.lang.Integer">
+    <select id="getOneRandomPicturesIdByModeId" resultType="java.lang.Integer">
     SELECT IFNULL(FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid} AND suggestion='PASS')),0)
     </select>
 

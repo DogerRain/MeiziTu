@@ -10,9 +10,14 @@ import lombok.Data;
 @Data
 public class MeiziTuPictureResponseVo {
     public String imageId;
-    public String title ;
-    public String modelName;
-    public String catogoryName;
-    public String collectionName;
     public String imageLink;
+    public String title ;
+    public String modelId;
+    public String modelName;
+    public String catogoryId;
+    public String catogoryName;
+    public String collectionId;
+    public String collectionName;
+
+
 }

@@ -3,9 +3,9 @@ package com.yudianxx.springBootDemo.config.redis;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
+import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
@@ -35,12 +35,7 @@ public class ICacheService {
         if (CollectionUtils.isNotEmpty(responseVoList)) {
             for (MeiziTuPictureResponseVo meiziTuPictureEntity : responseVoList) {
                 if (null != meiziTuPictureEntity) {
-                    if (StringUtils.isNotBlank(meiziTuPictureEntity.getImageId())
-                            && StringUtils.isNotBlank(meiziTuPictureEntity.getTitle())) {
-                        RedisUtil.set(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + meiziTuPictureEntity.getImageId(),RedisUtil.toJson(meiziTuPictureEntity));
-
-                    }
-
+                    RedisUtil.set(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + meiziTuPictureEntity.getImageId(), RedisUtil.toJson(meiziTuPictureEntity));
                 }
             }
         }
@@ -54,7 +49,8 @@ public class ICacheService {
         log.info("Start Loading Expression into redis cache...");
 
         // 查询表达式全量数据
-        List<MeiziTuPictureResponseVo> expressionCacheDtoList = imageHandleMapper.getCompletePicture(new MeiziTuPictureRequestVo());
+//        List<MeiziTuPictureResponseVo> expressionCacheDtoList = imageHandleMapper.getCompletePicture(new MeiziTuPictureRequestVo());
+        List<MeiziTuPictureResponseVo> expressionCacheDtoList =  imageHandleMapper.getCompletesImagesByCondition(new PictureModel());
 
         // 校验是否有数据需要加载缓存
         if (CollectionUtils.isEmpty(expressionCacheDtoList)) {
@@ -110,7 +106,7 @@ public class ICacheService {
             MeiziTuPictureResponseVo expressionCacheDto = expressionCacheDtoList.get(j);
             if (expressionCacheDto != null) {
                 // 清空StringBuilder
-                sb.delete(ConstantNumber.ZERO, sb.length());
+//                sb.delete(ConstantNumber.ZERO, sb.length());
 
                 // 获取字段Value
                 expression = expressionCacheDto.getImageId();
@@ -118,11 +114,12 @@ public class ICacheService {
                 expressionTypeId = expressionCacheDto.getModelName();
 
                 // 组织RedisKey
-                sb.append(RedisKeyPrefix.REDIS_EXPRESSION_KEY).append(columnId).append(RedisKeyPrefix.UNDERLINE)
-                        .append(expressionTypeId);
+//                sb.append(RedisKeyPrefix.REDIS_EXPRESSION_KEY).append(columnId).append(RedisKeyPrefix.UNDERLINE)
+//                        .append(expressionTypeId);
 
                 // 存入缓存
-                RedisUtil.set(sb.toString(), expression);
+//                RedisUtil.set(sb.toString(), expression);
+                RedisUtil.set(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + expression, RedisUtil.toJson(expressionCacheDto));
             } else {
                 log.info("cache value is null...");
             }

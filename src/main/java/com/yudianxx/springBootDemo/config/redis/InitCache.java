@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,7 @@ public class InitCache implements ApplicationRunner {
         // 加载字典表缓存
 //        cache.initDictCache();
         // 加载表达式缓存
-//        cache.initExpressionCache();
+        cache.initExpressionCache();
     }
 
 

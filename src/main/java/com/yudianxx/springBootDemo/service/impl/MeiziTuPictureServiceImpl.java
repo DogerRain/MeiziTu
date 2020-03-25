@@ -15,6 +15,7 @@ import com.yudianxx.springBootDemo.model.image.Image;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
+import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import com.yudianxx.springBootDemo.service.MeiztuPictureService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,8 +57,8 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     CollectionMapper collectionMapper;
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PageInfo getCompleteImages(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+
 
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = imageHandleMapper.getCompletePicture(meiziTuPictureRequestVo);
 
@@ -120,29 +121,17 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     }
 
     public List<MeiziTuPictureResponseVo> getRandomPictures() {
+        List<Model> modelList = getRandomModel(ConstantUtils.MODEL_RANDOM_COUNT);
 
-        List<Model> modelList = getRandomModel();
+        List<MeiziTuPictureResponseVo> resultList = new ArrayList<>();
 
-        List<MeiziTuPictureResponseVo> listResponse = new ArrayList<>();
+        List<MeiziTuPictureResponseVo> listResponse = getRandomPicturesByModel(modelList, resultList);
 
-        /**
-         * 获取随机Model的图片
-         */
-        for (Model model : modelList) {
-            int imageId = imageHandleMapper.getOneRandomPicturesByModeId(model.getId());
-            log.info("imageId:{}",imageId);
-            String redisValue = RedisUtil.get(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + imageId).toString();
-            log.info(redisValue);
-            if (StringUtils.isNotBlank(redisValue)) {
-                MeiziTuPictureResponseVo meiziTuPictureResponseVo = RedisUtil.parseJson(redisValue, MeiziTuPictureResponseVo.class);
-                log.info(meiziTuPictureResponseVo.getImageLink());
-                listResponse.add(meiziTuPictureResponseVo);
-            }
-        }
+
         //不够十张图，补够，但imagesId不能重复
         //需要补全多少：
-        int needCount = constantUtils.MODEL_RANDOM_COUNT * constantUtils.IMAGES_RANDOM_COUNT - listResponse.size();
-        log.info("第一次获取图片大小：{}，需要补全多少张：{}", listResponse.size(), needCount);
+//        int needCount = constantUtils.MODEL_RANDOM_COUNT * constantUtils.IMAGES_RANDOM_COUNT - listResponse.size();
+//        log.info("第一次获取图片大小：{}，需要补全多少张：{}", listResponse.size(), needCount);
 //        needPicturesCount(1, needCount, listResponse);
         return listResponse;
     }
@@ -152,9 +141,36 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
      *
      * @return
      */
-    public List<Model> getRandomModel() {
-        List<Model> modelList = modelMapper.getRandomModelCount(constantUtils.MODEL_RANDOM_COUNT);
+    public List<Model> getRandomModel(int needModelNum) {
+        List<Model> modelList = modelMapper.getRandomModelCount(needModelNum);
         return modelList;
+    }
+
+
+    /**
+     * @Author: Administrator
+     * @Date: 2020/3/25  23:58
+     * @Description: 根据modelId随机返回图片
+     * @Param:
+     * @return:
+     */
+    public List<MeiziTuPictureResponseVo> getRandomPicturesByModel(List<Model> modelList, List<MeiziTuPictureResponseVo> resultList) {
+//        if ()
+        MeiziTuPictureResponseVo meiziTuPictureResponseVo;
+        for (Model model : modelList) {
+            int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId());
+            log.info("imageId:{}", imageId);
+            String redisValue = RedisUtil.get(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + imageId).toString();
+            log.info("redis 取值 redisValue：{}", redisValue);
+            if (StringUtils.isNotBlank(redisValue)) {
+                meiziTuPictureResponseVo = RedisUtil.parseJson(redisValue, MeiziTuPictureResponseVo.class);
+            } else {
+                PictureModel pictureModel = PictureModel.builder().imageId(imageId).build();
+                meiziTuPictureResponseVo = imageHandleMapper.getCompletesImagesByCondition(pictureModel).get(0);
+            }
+            resultList.add(meiziTuPictureResponseVo);
+        }
+        return resultList;
     }
 
     /**
