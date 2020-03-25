@@ -28,7 +28,37 @@
 
     </select>
 
-    <select id="getrandomPictureByCount"
+
+
+    <select id="getAllPicture" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+        SELECT
+        ti.id as imageId,
+        ti.title,
+        ti.image_link AS imageLink,
+        tm.NAME AS modelName,
+        tc.NAME AS collectionName,
+        tca.NAME AS catogoryName
+        FROM
+        t_images ti
+        LEFT JOIN t_model tm ON ti.model_id = tm.id
+        LEFT JOIN t_collection tc ON ti.collection = tc.id
+        LEFT JOIN t_category tca ON tca.id = ti.category
+        WHERE
+        1 =1
+        <if test="modelId != null">
+            AND tm.id=#{modelId}
+        </if>
+        <if test="categoryId != null">
+            AND tca.id=#{categoryId}
+        </if>
+        <if test="collectionId != null">
+            AND tc.id=#{collectionId}
+        </if>
+        limit 10
+    </select>
+
+
+    <select id="getRandomPictureByModelId"
             resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
      SELECT ti.id as imageId,
         ti.title,
@@ -47,6 +77,10 @@
 				AND ti.id >=
 				FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid}))
 				LIMIT #{count};
+    </select>
+
+    <select id="getOneRandomPicturesByModeId" resultType="java.lang.Integer">
+    SELECT IFNULL(FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid} AND suggestion='PASS')),0)
     </select>
 
     <select id="getCompletePictureNotinclude"

@@ -2,9 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yudianxx.springBootDemo.mapper.image.ModelMapper">
     <select id="getRandomModelCount" resultType="com.yudianxx.springBootDemo.model.image.Model">
---        select max(id),min(id) into @M,@N from t_model ;
---       set @X= floor((@M-@N+1)*rand() + @N);
---       select * from t_model where id >= @X limit
+
  select * from t_model where id
   &gt;=
  FLOOR((SELECT (MAX(id)-MIN(id)+1)*RAND()+MIN(id) FROM t_model)) LIMIT

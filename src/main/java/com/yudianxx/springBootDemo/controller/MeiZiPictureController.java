@@ -4,6 +4,7 @@ package com.yudianxx.springBootDemo.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.model.User;
 import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
@@ -82,8 +83,9 @@ public class MeiZiPictureController {
     }
 
     @RequestMapping("/getRandomPictures")
-    public RetResult getRandomPictures() throws Exception {
+    public RetResult getRandomPictures(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) throws Exception {
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
+
         try {
             meiziTuPictureResponseVoList = meiztuPictureService.getRandomPictures();
         } catch (Exception e) {

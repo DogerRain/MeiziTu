@@ -15,8 +15,13 @@ public interface ImageHandleMapper extends BaseMapper<Image> {
 
     List<MeiziTuPictureResponseVo> getCompletePicture(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
+    List<MeiziTuPictureResponseVo> getAllPicture(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
-    List<MeiziTuPictureResponseVo> getrandomPictureByCount(Long modelid,int count);
+
+    List<MeiziTuPictureResponseVo> getRandomPictureByModelId(Long modelid,int count);
+
+
+    Integer getOneRandomPicturesByModeId(Long modelid);
 
     List<MeiziTuPictureResponseVo> getCompletePictureNotinclude(List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList,int count);
 

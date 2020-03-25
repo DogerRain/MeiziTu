@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ConstantUtils {
-    public static int MODEL_RANDOM_COUNT = 5;
-    public static int IMAGES_RANDOM_COUNT = 2;
+    public static int MODEL_RANDOM_COUNT = 10;
+    public static int IMAGES_RANDOM_COUNT = 1;
 }

@@ -3,6 +3,8 @@ package com.yudianxx.springBootDemo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yudianxx.springBootDemo.config.redis.RedisKeyPrefix;
+import com.yudianxx.springBootDemo.config.redis.RedisUtil;
 import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.mapper.image.CollectionMapper;
 import com.yudianxx.springBootDemo.mapper.image.ImageCategoryMapper;
@@ -52,6 +54,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
 
     @Autowired
     CollectionMapper collectionMapper;
+
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public PageInfo getCompleteImages(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
@@ -117,20 +120,22 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     }
 
     public List<MeiziTuPictureResponseVo> getRandomPictures() {
-        /**
-         * 规则，每次取5个模特，每个模特取2张图片
-         */
+
         List<Model> modelList = getRandomModel();
 
         List<MeiziTuPictureResponseVo> listResponse = new ArrayList<>();
-        log.info("怎么就不执行了呢");
 
         /**
          * 获取随机Model的图片
          */
         for (Model model : modelList) {
-            List<MeiziTuPictureResponseVo> list = imageHandleMapper.getrandomPictureByCount(model.getId(), constantUtils.IMAGES_RANDOM_COUNT);
-            for (MeiziTuPictureResponseVo meiziTuPictureResponseVo : list) {
+            int imageId = imageHandleMapper.getOneRandomPicturesByModeId(model.getId());
+            log.info("imageId:{}",imageId);
+            String redisValue = RedisUtil.get(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + imageId).toString();
+            log.info(redisValue);
+            if (StringUtils.isNotBlank(redisValue)) {
+                MeiziTuPictureResponseVo meiziTuPictureResponseVo = RedisUtil.parseJson(redisValue, MeiziTuPictureResponseVo.class);
+                log.info(meiziTuPictureResponseVo.getImageLink());
                 listResponse.add(meiziTuPictureResponseVo);
             }
         }
@@ -138,7 +143,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         //需要补全多少：
         int needCount = constantUtils.MODEL_RANDOM_COUNT * constantUtils.IMAGES_RANDOM_COUNT - listResponse.size();
         log.info("第一次获取图片大小：{}，需要补全多少张：{}", listResponse.size(), needCount);
-        needPicturesCount(1, needCount, listResponse);
+//        needPicturesCount(1, needCount, listResponse);
         return listResponse;
     }
 
@@ -149,7 +154,6 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
      */
     public List<Model> getRandomModel() {
         List<Model> modelList = modelMapper.getRandomModelCount(constantUtils.MODEL_RANDOM_COUNT);
-        log.info("随机Modelid：{}", modelList);
         return modelList;
     }
 
@@ -207,7 +211,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
             //  int i=1/0;
             selfMeiztuService.c(model);  //这个就能回滚
         } catch (Exception e) {
-             //         throw e; //把错误抛出来，@Transactional才能发现
+            //         throw e; //把错误抛出来，@Transactional才能发现
         }
         return model;
     }

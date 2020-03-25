@@ -18,7 +18,14 @@ spring:
     url: jdbc:mysql://localhost:3306/images?autoreconnect=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
 
-# 热部署默认为true
+# redis配置
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+
+
+  # 热部署默认为true
   devtools:
     restart:
       enabled: false
@@ -75,7 +82,7 @@ mybatis-plus:
 logging:
   config: classpath:logback-spring.xml
   level:
-    com.yudianxx.springBootDemo: info
+    com.yudianxx.springBootDemo: debug
 
 
 pagehelper:
@@ -83,4 +90,7 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
+
+
 
