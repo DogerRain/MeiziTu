@@ -2,13 +2,12 @@ package com.yudianxx.springBootDemo.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yudianxx.springBootDemo.model.image.Category;
-import com.yudianxx.springBootDemo.model.image.Image;
-import com.yudianxx.springBootDemo.model.image.ImageCollection;
 import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huangyongwen
@@ -16,30 +15,19 @@ import java.util.List;
  * @Description
  */
 public interface MeiztuPictureService {
+
+    PageInfo getCompleteImagesByPages(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
+
     PageInfo getAllModels(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
-
-
-    PageInfo getCompleteImages(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
-
-    List<Model> getAllModels(Model model);
-
 
     List<Category> getAllCategorys(Category category);
 
-    List<Image> getAllImages(Image image);
-
-
-    List<ImageCollection> getAllImageCollection(ImageCollection imageCollection);
-
+    PageInfo getAllImageCollections(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
     List<MeiziTuPictureResponseVo> getRandomPictures();
 
-    Model testTransactional() throws Exception;
+    Map<String, Object> getModelHomeBackgroundInfo(int modelId);
 
-    void a(Model model);
-
-    void b(Model model);
-
-    void c(Model model);
+    PageInfo getModelImagesRank(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
 }

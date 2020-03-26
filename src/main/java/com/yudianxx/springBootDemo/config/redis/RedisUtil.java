@@ -17,10 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -386,6 +383,7 @@ public class RedisUtil {
         }
     }
 
+
     /**
      * 获取list缓存的内容
      *
@@ -703,4 +701,20 @@ public class RedisUtil {
         set(key, toJson(list));
     }
 
+    public static Set<String> getKeys(String patten) {
+        Set<String> keys = redisTemplate.keys(patten);
+//        for (s)
+        return keys;
+    }
+
+    public static Map getKeysValues(String patten) {
+        Set<String> keys = redisTemplate.keys(patten);
+        Map map = new HashMap();
+        for (String key : keys) {
+            if (StringUtils.isNotBlank(key)) {
+                map.put(key, get(key));
+            }
+        }
+        return map;
+    }
 }

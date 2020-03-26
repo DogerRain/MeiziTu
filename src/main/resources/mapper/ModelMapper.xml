@@ -8,4 +8,10 @@
  FLOOR((SELECT (MAX(id)-MIN(id)+1)*RAND()+MIN(id) FROM t_model)) LIMIT
       #{count};
     </select>
+
+    <select id="getModelImagesRank" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+
+		SELECT max(ti.id) as imageId,ti.image_link as imageLink,tm.name as modelName,tm.id as modelId FROM t_images ti LEFT JOIN t_model tm ON ti.model_id =tm.id WHERE ti.suggestion="PASS"
+	GROUP BY ti.model_id
+    </select>
 </mapper>

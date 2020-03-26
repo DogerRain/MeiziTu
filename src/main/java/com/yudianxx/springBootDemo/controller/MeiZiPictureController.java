@@ -3,11 +3,8 @@ package com.yudianxx.springBootDemo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import com.yudianxx.springBootDemo.constants.ConstantUtils;
+import com.yudianxx.springBootDemo.config.redis.RedisUtil;
 import com.yudianxx.springBootDemo.model.User;
-import com.yudianxx.springBootDemo.model.image.ImageCollection;
-import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import com.yudianxx.springBootDemo.model.responseVo.RetResponse;
@@ -19,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/meizitu")
@@ -36,6 +32,15 @@ public class MeiZiPictureController {
     public Object test() {
         log.info("小程序接口调入测试");
         User user1 = User.builder().age(25).userName("以太网").password("123").build();
+
+        Set<String> keys = RedisUtil.getKeys("Key_1000*");
+
+        for (String key : keys) {
+            log.info(key);
+        }
+
+        Map map = RedisUtil.getKeysValues("Key_1000*");
+        log.info("map:{}", map);
         return JSONObject.toJSON(user1);
     }
 
@@ -53,37 +58,47 @@ public class MeiZiPictureController {
     /**
      * @param meiziTuPictureRequestVo
      * @return
-     * @Desc 根据model id ， collection id ,category id  筛选获取图片信息，分页
+     * @Desc 根据model id ， collection id ,category id  筛选获取所有图片信息，分页
      */
-    @RequestMapping("/getCompleteImages")
-    public RetResult getImagesTest(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
-        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getCompleteImages(meiziTuPictureRequestVo);
+    @RequestMapping("/getCompleteImagesByPage")
+    public RetResult getCompleteImagesByPages(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getCompleteImagesByPages(meiziTuPictureRequestVo);
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
 
     }
 
-//    @RequestMapping("/getCompleteImagesTest")
-//    public RetResult getImagesTest() {
-//        MeiziTuPictureRequestVo meiziTuPictureRequestVo = new MeiziTuPictureRequestVo();
-//        PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getImagesTest(meiziTuPictureRequestVo);
-//        return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
-//
-//    }
+    /**
+     * @param meiziTuPictureRequestVo
+     * @return 获取所有model，分页
+     */
 
-    @RequestMapping("/getAllMoedel")
-    public RetResult findAllmodel(@RequestBody Model model) {
-        List<Model> modelList = meiztuPictureService.getAllModels(model);
+    @RequestMapping("/getAllMoedels")
+    public RetResult getAllMoedels(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        PageInfo modelList = meiztuPictureService.getAllModels(meiziTuPictureRequestVo);
         return RetResponse.makeOKRsp(modelList);
     }
 
+    /**
+     * 获取所有的合集
+     *
+     * @param meiziTuPictureRequestVo
+     * @return
+     */
     @RequestMapping("/getAllCollection")
-    public RetResult getAllCollection(@RequestBody ImageCollection imageCollection) {
-        List<ImageCollection> imageCollectionList = meiztuPictureService.getAllImageCollection(imageCollection);
+    public RetResult getAllCollection(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        PageInfo imageCollectionList = meiztuPictureService.getAllImageCollections(meiziTuPictureRequestVo);
         return RetResponse.makeOKRsp(imageCollectionList);
     }
 
+
+    /**
+     * 随机返回10张图片
+     *
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/getRandomPictures")
-    public RetResult getRandomPictures(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) throws Exception {
+    public RetResult getRandomPictures() throws Exception {
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
 
         try {
@@ -94,9 +109,25 @@ public class MeiZiPictureController {
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
     }
 
-    @RequestMapping("/TestTransactional")
-    public RetResult TestTransactional() throws Exception {
-        return RetResponse.makeOKRsp(meiztuPictureService.testTransactional());
+    @RequestMapping("/getModelHomeBackgroundInfo")
+    public RetResult getModelHomeBackgroundInfo(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        if (meiziTuPictureRequestVo.getModelId() == 0) {
+            return RetResponse.makeErrRsp("参数为空");
+        }
+        try {
+            map = meiztuPictureService.getModelHomeBackgroundInfo(meiziTuPictureRequestVo.getModelId());
+
+
+        } catch (Exception e) {
+            RetResponse.makeErrRsp("内部错误");
+        }
+        return RetResponse.makeOKRsp(map);
+    }
+
+    @RequestMapping("/getModelImagesRank")
+    public RetResult getModelImagesRank(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        return RetResponse.makeOKRsp(meiztuPictureService.getModelImagesRank(meiziTuPictureRequestVo));
     }
 
 }

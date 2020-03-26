@@ -19,7 +19,7 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-        <if test="imageId != null">
+        <if test="imageId != 0">
             AND ti.id=#{imageId}
         </if>
         <if test="modelId != null">
@@ -34,7 +34,8 @@
         and ti.suggestion ="PASS"
     </select>
 
-    <select id="getCompletesImagesByCondition" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+    <select id="getCompletesImagesByCondition"
+            resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
         SELECT
         ti.id as imageId,
         ti.title,
@@ -53,7 +54,7 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-        <if test="imageId != null">
+        <if test="imageId != 0">
             AND ti.id=#{imageId}
         </if>
         <if test="modelId != null">
@@ -66,37 +67,47 @@
             AND tc.id=#{collectionId}
         </if>
         and ti.suggestion ="PASS"
+
     </select>
 
 
-
-    <select id="getAllPicture" resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
-        SELECT
-        ti.id as imageId,
-        ti.title,
-        ti.image_link AS imageLink,
-        tm.NAME AS modelName,
-        tc.NAME AS collectionName,
-        tca.NAME AS catogoryName
-        FROM
-        t_images ti
-        LEFT JOIN t_model tm ON ti.model_id = tm.id
-        LEFT JOIN t_collection tc ON ti.collection = tc.id
-        LEFT JOIN t_category tca ON tca.id = ti.category
-        WHERE
-        1 =1
-        <if test="modelId != null">
-            AND tm.id=#{modelId}
-        </if>
-        <if test="categoryId != null">
-            AND tca.id=#{categoryId}
-        </if>
-        <if test="collectionId != null">
-            AND tc.id=#{collectionId}
-        </if>
-        limit 10
+    <select id="getModelHomeBackgroundInfo"
+            resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+                   SELECT
+                max( ti.id ) AS imageId,
+                tm.NAME AS modelName,
+                ti.image_link AS imageLink,
+                count( DISTINCT ti.collection ) AS collectionSum
+            FROM
+                t_images ti
+                LEFT JOIN t_model tm ON ti.model_id = tm.id
+                LEFT JOIN t_collection tc ON tc.id = ti.collection
+            WHERE
+                tm.id = #{modelId}
+                AND ti.suggestion = "PASS"
+            ORDER BY
+                ti.id DESC
+                LIMIT 1
     </select>
 
+    <select id="getModelHomeBackgroundInfoOfCollection"
+            resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">
+SELECT
+	ti.model_id AS modelId,
+	tc.id AS collectionId,
+	tc.NAME AS collectionName,
+	ti.image_link AS imageLink,
+	count( ti.id ) AS pictureSum
+FROM
+	t_collection tc
+	LEFT JOIN t_images ti ON tc.id = ti.collection
+WHERE
+	ti.model_id = #{modelId}
+	AND ti.suggestion = "PASS"
+GROUP BY
+	tc.id;
+
+   </select>
 
     <select id="getRandomPictureByModelId"
             resultType="com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo">

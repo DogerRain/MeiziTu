@@ -31,7 +31,7 @@ public class ICacheService {
 
     public void initDictCache() {
         log.info("Start Loading normal key_value into redis cache...");
-        List<MeiziTuPictureResponseVo> responseVoList = imageHandleMapper.getCompletePicture(new MeiziTuPictureRequestVo());
+        List<MeiziTuPictureResponseVo> responseVoList = imageHandleMapper.getCompletesImagesByCondition(PictureModel.builder().build());
         if (CollectionUtils.isNotEmpty(responseVoList)) {
             for (MeiziTuPictureResponseVo meiziTuPictureEntity : responseVoList) {
                 if (null != meiziTuPictureEntity) {
@@ -50,7 +50,7 @@ public class ICacheService {
 
         // 查询表达式全量数据
 //        List<MeiziTuPictureResponseVo> expressionCacheDtoList = imageHandleMapper.getCompletePicture(new MeiziTuPictureRequestVo());
-        List<MeiziTuPictureResponseVo> expressionCacheDtoList =  imageHandleMapper.getCompletesImagesByCondition(new PictureModel());
+        List<MeiziTuPictureResponseVo> expressionCacheDtoList = imageHandleMapper.getCompletesImagesByCondition(PictureModel.builder().build());
 
         // 校验是否有数据需要加载缓存
         if (CollectionUtils.isEmpty(expressionCacheDtoList)) {

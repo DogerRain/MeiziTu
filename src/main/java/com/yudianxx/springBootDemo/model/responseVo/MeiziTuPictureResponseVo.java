@@ -18,6 +18,8 @@ public class MeiziTuPictureResponseVo {
     public String catogoryName;
     public String collectionId;
     public String collectionName;
+    public String collectionSum;
+    public String pictureSum;
 
 
 }

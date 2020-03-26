@@ -11,17 +11,17 @@ spring:
     testWhileIdle: true
     minEvictableIdleTimeMillis: 30000
     timeBetweenEvictionRunsMillis: 60000
-    max-active: 15
+    max-active: 500
     driverClassName: com.mysql.jdbc.Driver
 #    driverClassName: com.mysql.cj.jdbc.Driver
-    max-wait: 8000
-    url: jdbc:mysql://localhost:3306/images?autoreconnect=true&serverTimezone=UTC&characterEncoding=UTF-8
+    max-wait: 18000
+    url: jdbc:mysql://119.29.62.179:3306/images?autoreconnect=true&serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false
     username: root
 
 # redis配置
   redis:
     database: 0
-    host: 127.0.0.1
+    host: 119.29.62.179
     port: 6379
     password: redis
 
@@ -91,6 +91,7 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
 
 
 
