@@ -2,7 +2,6 @@ package com.yudianxx.springBootDemo.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yudianxx.springBootDemo.model.image.Category;
-import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 
@@ -26,7 +25,7 @@ public interface MeiztuPictureService {
 
     List<MeiziTuPictureResponseVo> getRandomPictures();
 
-    Map<String, Object> getModelHomeBackgroundInfo(int modelId);
+    Map<String, Object> getModelHomeBackgroundInfo(String modelId);
 
     PageInfo getModelImagesRank(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 

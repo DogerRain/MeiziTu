@@ -62,6 +62,13 @@ public class MeiZiPictureController {
      */
     @RequestMapping("/getCompleteImagesByPage")
     public RetResult getCompleteImagesByPages(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        //防止恶意输入击穿数据库
+        if (meiziTuPictureRequestVo != null &&
+                meiziTuPictureRequestVo.getImageId() == null &&
+                meiziTuPictureRequestVo.getCollectionId() == null &&
+                meiziTuPictureRequestVo.getModelId() == null) {
+            return RetResponse.makeErrRsp("参数为空");
+        }
         PageInfo meiziTuPictureResponseVoList = meiztuPictureService.getCompleteImagesByPages(meiziTuPictureRequestVo);
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
 
@@ -100,24 +107,18 @@ public class MeiZiPictureController {
     @RequestMapping("/getRandomPictures")
     public RetResult getRandomPictures() throws Exception {
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
-
-        try {
-            meiziTuPictureResponseVoList = meiztuPictureService.getRandomPictures();
-        } catch (Exception e) {
-            RetResponse.makeErrRsp("内部错误");
-        }
+        meiziTuPictureResponseVoList = meiztuPictureService.getRandomPictures();
         return RetResponse.makeOKRsp(meiziTuPictureResponseVoList);
     }
 
     @RequestMapping("/getModelHomeBackgroundInfo")
     public RetResult getModelHomeBackgroundInfo(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) throws Exception {
         Map<String, Object> map = new HashMap<>();
-        if (meiziTuPictureRequestVo.getModelId() == 0) {
+        if (meiziTuPictureRequestVo.getModelId() == null) {
             return RetResponse.makeErrRsp("参数为空");
         }
         try {
             map = meiztuPictureService.getModelHomeBackgroundInfo(meiziTuPictureRequestVo.getModelId());
-
 
         } catch (Exception e) {
             RetResponse.makeErrRsp("内部错误");

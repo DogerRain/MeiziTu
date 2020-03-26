@@ -12,7 +12,7 @@ import lombok.Data;
 @Builder
 public class PictureModel  {
     Boolean isBanner;
-    int imageId;
+    String imageId;
     String modelId;
     String modelName;
     String categoryId;

@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 public class MeiziTuPictureRequestVo extends PageObject {
     Boolean isBanner;
-    int imageId;
-    int modelId;
+    String imageId;
+    String modelId;
     String modelName;
-    int categoryId;
+    String categoryId;
     String categoryName;
-    int collectionId;
+    String collectionId;
     String collectionName;
 }

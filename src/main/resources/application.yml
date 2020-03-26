@@ -95,4 +95,4 @@ pagehelper:
 
 
 meizitu:
-  needInitCache: 12
+  needInitCache: 1

@@ -2,7 +2,6 @@ package com.yudianxx.springBootDemo.mapper.image;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yudianxx.springBootDemo.model.image.Image;
-import com.yudianxx.springBootDemo.model.image.Model;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
@@ -29,9 +28,9 @@ public interface ImageHandleMapper extends BaseMapper<Image> {
     List<MeiziTuPictureResponseVo> getCompletePictureNotinclude(List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList, int count);
 
 
-    MeiziTuPictureResponseVo getModelHomeBackgroundInfo(int modelId);
+    MeiziTuPictureResponseVo getModelHomeBackgroundInfo(String modelId);
 
-    List<MeiziTuPictureResponseVo> getModelHomeBackgroundInfoOfCollection(int modelId);
+    List<MeiziTuPictureResponseVo> getModelHomeBackgroundInfoOfCollection(String modelId);
 
 
 }

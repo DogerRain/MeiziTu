@@ -2,7 +2,6 @@ package com.yudianxx.springBootDemo.config.redis;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
-import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import lombok.extern.slf4j.Slf4j;
@@ -109,17 +108,22 @@ public class ICacheService {
 //                sb.delete(ConstantNumber.ZERO, sb.length());
 
                 // 获取字段Value
-                expression = expressionCacheDto.getImageId();
-                columnId = expressionCacheDto.getTitle();
-                expressionTypeId = expressionCacheDto.getModelName();
+                String imageId = expressionCacheDto.getImageId();
+                String modelId = expressionCacheDto.getModelId();
+                String collectionId = expressionCacheDto.getCollectionId();
+
+
 
                 // 组织RedisKey
 //                sb.append(RedisKeyPrefix.REDIS_EXPRESSION_KEY).append(columnId).append(RedisKeyPrefix.UNDERLINE)
 //                        .append(expressionTypeId);
 
+                //key生成规则
+                String keys = imageId + RedisKeyPrefix.REDIS_SPACE + modelId + RedisKeyPrefix.REDIS_SPACE + collectionId;
+
                 // 存入缓存
 //                RedisUtil.set(sb.toString(), expression);
-                RedisUtil.set(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + expression, RedisUtil.toJson(expressionCacheDto));
+                RedisUtil.set(keys, RedisUtil.toJson(expressionCacheDto));
             } else {
                 log.info("cache value is null...");
             }

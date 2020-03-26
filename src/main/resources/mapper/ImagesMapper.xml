@@ -19,7 +19,7 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-        <if test="imageId != 0">
+        <if test="imageId != null">
             AND ti.id=#{imageId}
         </if>
         <if test="modelId != null">
@@ -54,7 +54,7 @@
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-        <if test="imageId != 0">
+        <if test="imageId != null">
             AND ti.id=#{imageId}
         </if>
         <if test="modelId != null">

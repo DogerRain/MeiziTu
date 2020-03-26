@@ -1,5 +1,6 @@
 package com.yudianxx.springBootDemo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -58,21 +59,41 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
 
     public PageInfo getCompleteImagesByPages(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
         //redis里面查询，没有再往数据库里面查询
+        String imageId = StringUtils.isBlank(meiziTuPictureRequestVo.getImageId()) ? "*" : meiziTuPictureRequestVo.getImageId() + "";
+        String modeId = StringUtils.isBlank(meiziTuPictureRequestVo.getModelId()) ? "*" : meiziTuPictureRequestVo.getModelId() + "";
+        String collection = StringUtils.isBlank(meiziTuPictureRequestVo.getCollectionId()) ? "*" : meiziTuPictureRequestVo.getCollectionId() + "";
 
-//        String redisValue = RedisUtil.get(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + imageId).toString();
 
+        String key = imageId + RedisKeyPrefix.REDIS_SPACE + modeId + RedisKeyPrefix.REDIS_SPACE + collection;
 
-        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = imageHandleMapper.getCompletePicture(meiziTuPictureRequestVo);
+        Map map = RedisUtil.getKeysValues(key);
+        String redisValue = "";
+        List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
+
+        for (Object v : map.values()) {
+            redisValue = v.toString();
+            if (StringUtils.isNotBlank(redisValue)) {
+                MeiziTuPictureResponseVo meiziTuPictureResponseVo = JSON.parseObject(redisValue, MeiziTuPictureResponseVo.class);
+                meiziTuPictureResponseVoList.add(meiziTuPictureResponseVo);
+            }
+        }
+
         //分页
         PageHelper.startPage(meiziTuPictureRequestVo.getPageNum(), meiziTuPictureRequestVo.getPageSize());
+
+
+        if (map.size() == 0) {
+            meiziTuPictureResponseVoList = imageHandleMapper.getCompletePicture(meiziTuPictureRequestVo);
+        }
         PageInfo pageInfo = new PageInfo(meiziTuPictureResponseVoList);
         return pageInfo;
+
     }
 
     public PageInfo getAllModels(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
         PageHelper.startPage(meiziTuPictureRequestVo.getPageNum(), meiziTuPictureRequestVo.getPageSize());
         QueryWrapper<Model> queryWrapper = new QueryWrapper<>();
-        if (meiziTuPictureRequestVo != null && meiziTuPictureRequestVo.getModelId() != 0) {
+        if (meiziTuPictureRequestVo != null && StringUtils.isNotBlank(meiziTuPictureRequestVo.getModelId())) {
             queryWrapper.lambda().eq(Model::getId, meiziTuPictureRequestVo.getModelId());
         }
         List<Model> list = modelMapper.selectList(queryWrapper);
@@ -90,7 +111,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     public PageInfo getAllImageCollections(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
         PageHelper.startPage(meiziTuPictureRequestVo.getPageNum(), meiziTuPictureRequestVo.getPageSize());
         QueryWrapper<ImageCollection> collectionQueryWrapper = new QueryWrapper<>();
-        if (meiziTuPictureRequestVo != null && meiziTuPictureRequestVo.getCollectionId() != 0) {
+        if (meiziTuPictureRequestVo != null && StringUtils.isNotBlank(meiziTuPictureRequestVo.getCollectionId())) {
             collectionQueryWrapper.lambda().eq(ImageCollection::getId, meiziTuPictureRequestVo.getCollectionId());
         }
         List<ImageCollection> imageCollectionList = collectionMapper.selectList(collectionQueryWrapper);
@@ -128,12 +149,18 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         for (Model model : modelList) {
             int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId());
             log.info("imageId:{}", imageId);
-            String redisValue = RedisUtil.get(RedisKeyPrefix.REDIS_SYSTEM_DICT_KEY + imageId).toString();
+            Map map = RedisUtil.getKeysValues(imageId + RedisKeyPrefix.REDIS_SPACE + "*");
+            String redisValue = "";
+            for (Object v : map.values()) {
+                System.out.println("value= " + v);
+                redisValue = v.toString();
+            }
             log.info("redis 取值 redisValue：{}", redisValue);
             if (StringUtils.isNotBlank(redisValue)) {
                 meiziTuPictureResponseVo = RedisUtil.parseJson(redisValue, MeiziTuPictureResponseVo.class);
             } else {
-                PictureModel pictureModel = PictureModel.builder().imageId(imageId).build();
+                PictureModel pictureModel = PictureModel.builder().imageId(imageId+"").build();
+
                 meiziTuPictureResponseVo = imageHandleMapper.getCompletesImagesByCondition(pictureModel).get(0);
             }
             resultList.add(meiziTuPictureResponseVo);
@@ -151,7 +178,8 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     }
 
 
-    public Map<String, Object> getModelHomeBackgroundInfo(int modelId) {
+    @Override
+    public Map<String, Object> getModelHomeBackgroundInfo(String modelId) {
         //1. 背景图
         MeiziTuPictureResponseVo meiziTuPictureResponseVo = imageHandleMapper.getModelHomeBackgroundInfo(modelId);
         //2. 合集情况
