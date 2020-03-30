@@ -27,6 +27,10 @@ public class MeiZiPictureController {
     @Autowired
     MeiztuPictureService meiztuPictureService;
 
+
+
+
+
     @RequestMapping("/test")
 //    public Object test(@RequestBody User user) {
     public Object test() {

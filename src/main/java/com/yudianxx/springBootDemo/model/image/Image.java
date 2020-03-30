@@ -30,5 +30,9 @@ public class Image implements Serializable {
     private String createTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date editTime;
+
+    private String width;
+    private String height;
+    private int pictureType;
 }
 

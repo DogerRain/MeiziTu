@@ -83,7 +83,7 @@ mybatis-plus:
 logging:
   config: classpath:logback-spring.xml
   level:
-    com.yudianxx.springBootDemo: debug
+    com.yudianxx.springBootDemo: info
 
 
 pagehelper:
@@ -95,4 +95,4 @@ pagehelper:
 
 
 meizitu:
-  needInitCache: 1
+  needInitCache: 10
