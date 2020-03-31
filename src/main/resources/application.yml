@@ -11,7 +11,7 @@ spring:
     testWhileIdle: true
     minEvictableIdleTimeMillis: 30000
     timeBetweenEvictionRunsMillis: 60000
-    max-active: 15
+    max-active: 10000
     driverClassName: com.mysql.jdbc.Driver
 #    driverClassName: com.mysql.cj.jdbc.Driver
     max-wait: 8000

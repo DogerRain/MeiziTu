@@ -11,4 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class ConstantUtils {
     public static int MODEL_RANDOM_COUNT = 10;
     public static int IMAGES_RANDOM_COUNT = 1;
+
+
+    public static int THREAD_SIZE = 3;
+
 }

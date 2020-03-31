@@ -40,6 +40,8 @@ public class ICacheService {
         }
     }
 
+
+
     /**
      * 线程池方式加载进redis
      */

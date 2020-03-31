@@ -21,11 +21,11 @@ public class AsyncConfig {
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 设置核心线程数
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(1000);
         // 设置最大线程数
-        executor.setMaxPoolSize(20);
+        executor.setMaxPoolSize(2000);
         // 设置队列容量
-        executor.setQueueCapacity(40);
+        executor.setQueueCapacity(4000);
         // 设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(60);
         // 设置默认线程名称
