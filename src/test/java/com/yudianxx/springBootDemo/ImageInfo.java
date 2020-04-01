@@ -5,14 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.yudianxx.springBootDemo.config.redis.ConstantNumber;
-import com.yudianxx.springBootDemo.config.redis.RedisKeyPrefix;
-import com.yudianxx.springBootDemo.config.redis.RedisUtil;
+import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.constants.HttpRequestUtils;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
 import com.yudianxx.springBootDemo.model.image.Image;
-import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
-import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,8 +61,8 @@ public class ImageInfo {
         int pageSize = 300;
 
         // 计算需要开启多少条线程
-        int threadCount = pageCount % pageSize == ConstantNumber.ZERO ? pageCount / pageSize
-                : pageCount / pageSize + ConstantNumber.ONE;
+        int threadCount = pageCount % pageSize == ConstantUtils.ZERO ? pageCount / pageSize
+                : pageCount / pageSize + ConstantUtils.ONE;
 
         // 开启threadCount条线程
         for (int pageNumber = 1; pageNumber <= threadCount; pageNumber++) {
@@ -99,7 +95,7 @@ public class ImageInfo {
         for (int j = executeNumber - pageSize; j < executeNumber; j++) {
             Image image = expressionCacheDtoList.get(j);
             if (image != null) {
-                log.info("{}执行线程成功,imageId；{}",Thread.currentThread().getName() ,image.getId());
+                log.info("当前线程名称：{}，执行线程成功,imageId；{}",Thread.currentThread().getName() ,image.getId());
                 String url = image.getImageLink() + "?imageInfo";
                 Long id = image.getId();
                 try {

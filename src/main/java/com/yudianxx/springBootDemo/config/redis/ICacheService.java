@@ -1,6 +1,7 @@
 package com.yudianxx.springBootDemo.config.redis;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
 import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
@@ -41,7 +42,6 @@ public class ICacheService {
     }
 
 
-
     /**
      * 线程池方式加载进redis
      */
@@ -55,7 +55,7 @@ public class ICacheService {
 
         // 校验是否有数据需要加载缓存
         if (CollectionUtils.isEmpty(expressionCacheDtoList)) {
-            log.info("There Is Nothing Need To Cache!");
+            log.info("list为空，退出");
             return;
         }
 
@@ -63,17 +63,27 @@ public class ICacheService {
         int pageCount = expressionCacheDtoList.size();
 
         // 每条线程处理的任务数
-        int pageSize = 300;
+        int pageSize = ConstantUtils.THREAD_SIZE;
 
         // 计算需要开启多少条线程
-        int threadCount = pageCount % pageSize == ConstantNumber.ZERO ? pageCount / pageSize
-                : pageCount / pageSize + ConstantNumber.ONE;
-
+        int threadCount = pageCount % pageSize == ConstantUtils.ZERO ? pageCount / pageSize
+                : pageCount / pageSize + ConstantUtils.ONE;
+        int executeNumber = 0;
         // 开启threadCount条线程
         for (int pageNumber = 1; pageNumber <= threadCount; pageNumber++) {
             // 计算分页参数
-            final int executeNumber = pageSize * pageNumber;
-            taskExecutor.execute(() -> executeCache(expressionCacheDtoList, pageCount, pageSize, executeNumber));
+
+            //一个页执行的任务数，保证不重复
+            executeNumber = pageSize * pageNumber;
+            //每页 开始 执行序号
+            int startNum = executeNumber - pageSize;
+            //如果是末页， 153/100 =1 ,共2个任务数， 末页id 只需要到 152
+            if (threadCount == pageNumber) {
+                executeNumber = pageCount;
+            }
+            //末页
+            int finalNumber = executeNumber;
+            taskExecutor.execute(() -> executeCache(expressionCacheDtoList, startNum, finalNumber));
         }
 
         // 计算完成任务消耗时间
@@ -85,36 +95,23 @@ public class ICacheService {
      * 将字段表达式刷入REDIS缓存
      *
      * @param expressionCacheDtoList
-     * @param pageCount
-     * @param pageSize
-     * @param executeNumber
+     * @param startNum
+     * @param finalNumber
      */
-    private void executeCache(List<MeiziTuPictureResponseVo> expressionCacheDtoList, int pageCount, int pageSize,
-                              int executeNumber) {
-
-        // 校验执行最大数量是否大于总计数
-        executeNumber = executeNumber < pageCount ? executeNumber : pageCount;
-
-        // 声明参数
-        String expression;
-        String columnId;
-        String expressionTypeId;
-        StringBuilder sb = new StringBuilder();
+    private void executeCache(List<MeiziTuPictureResponseVo> expressionCacheDtoList, int startNum, int finalNumber) {
 
         // 多线程分页处理
         // 例如Thread-1处理0(含)~300(不含)，Thread-2处理300~600(不含)
-        for (int j = executeNumber - pageSize; j < executeNumber; j++) {
+        for (int j = startNum; j < finalNumber; j++) {
             MeiziTuPictureResponseVo expressionCacheDto = expressionCacheDtoList.get(j);
             if (expressionCacheDto != null) {
                 // 清空StringBuilder
-//                sb.delete(ConstantNumber.ZERO, sb.length());
+//                sb.delete(ConstantUtils.ZERO, sb.length());
 
                 // 获取字段Value
                 String imageId = expressionCacheDto.getImageId();
                 String modelId = expressionCacheDto.getModelId();
                 String collectionId = expressionCacheDto.getCollectionId();
-
-
 
                 // 组织RedisKey
 //                sb.append(RedisKeyPrefix.REDIS_EXPRESSION_KEY).append(columnId).append(RedisKeyPrefix.UNDERLINE)

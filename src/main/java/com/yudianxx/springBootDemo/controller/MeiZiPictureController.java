@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.pagehelper.PageInfo;
-import com.yudianxx.springBootDemo.config.redis.ConstantNumber;
 import com.yudianxx.springBootDemo.config.redis.RedisUtil;
+import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.constants.HttpRequestUtils;
 import com.yudianxx.springBootDemo.mapper.image.ImageHandleMapper;
 import com.yudianxx.springBootDemo.model.User;
@@ -152,22 +152,15 @@ public class MeiZiPictureController {
 
     @RequestMapping("/getImageInfoByThread")
     public void getImageInfoAndInsert() {
-        b();
-    }
-
-    /**
-     * 线程池方式加载进redis
-     */
-    public void b() {
         long start = System.currentTimeMillis();
         log.info("Start Loading Expression into redis cache...");
 
         // 查询表达式全量数据
-        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>().lambda().last("limit 153"));
+        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>().lambda().last("limit 8"));
 
         // 校验是否有数据需要加载缓存
         if (CollectionUtils.isEmpty(imageList)) {
-            log.info("There Is Nothing Need To Cache!");
+            log.info("list为空，退出");
             return;
         }
 
@@ -175,22 +168,27 @@ public class MeiZiPictureController {
         int pageCount = imageList.size();
 
         // 每条线程处理的任务数
-        int pageSize = 300;
+        int pageSize = ConstantUtils.THREAD_SIZE;
 
         // 计算需要开启多少条线程
-        int threadCount = pageCount % pageSize == ConstantNumber.ZERO ? pageCount / pageSize
-                : pageCount / pageSize + ConstantNumber.ONE;
-
-
+        int threadCount = pageCount % pageSize == ConstantUtils.ZERO ? pageCount / pageSize
+                : pageCount / pageSize + ConstantUtils.ONE;
+        int executeNumber = 0;
         // 开启threadCount条线程
         for (int pageNumber = 1; pageNumber <= threadCount; pageNumber++) {
             // 计算分页参数
 
-            int executeNumber = pageSize * pageNumber;
-
-            int finalPageNumber = pageNumber;
-
-            taskExecutor.execute(() -> executeCache3(imageList, finalPageNumber,pageCount, pageSize, executeNumber));
+            //一个页执行的任务数，保证不重复
+            executeNumber = pageSize * pageNumber;
+            //每页 开始 执行序号
+            int startNum = executeNumber - pageSize;
+            //如果是末页， 153/100 =1 ,2个任务数， 末页id 只需要到 152
+            if (threadCount == pageNumber) {
+                executeNumber = pageCount;
+            }
+            //末页
+            int finalNumber = executeNumber;
+            taskExecutor.execute(() -> executeCache(imageList, startNum, finalNumber));
         }
 
         // 计算完成任务消耗时间
@@ -198,26 +196,12 @@ public class MeiZiPictureController {
         log.info("Started Loading Expression Cache in {}", cost + " seconds");
     }
 
-    /**
-     * 将字段表达式刷入REDIS缓存
-     *
-     * @param expressionCacheDtoList
-     * @param pageCount
-     * @param pageSize
-     * @param executeNumber
-     */
-    private void executeCache2(List<Image> expressionCacheDtoList, int pageCount, int pageSize,
-                               int executeNumber) {
 
-        // 校验执行最大数量是否大于总计数
-        executeNumber = executeNumber < pageCount ? executeNumber : pageCount;
-
-        // 多线程分页处理
-        // 例如Thread-1处理0(含)~300(不含)，Thread-2处理300~600(不含)
-        for (int j = executeNumber - pageSize; j < executeNumber; j++) {
+    private void executeCache(List<Image> expressionCacheDtoList, int startNum, int finalNumber) {
+        for (int j = startNum; j < finalNumber; j++) {
             Image image = expressionCacheDtoList.get(j);
             if (image != null) {
-                log.info("{}执行线程成功,imageId:{}", Thread.currentThread().getName(), image.getId());
+                log.info("当前线程名称：{}，执行线程成功,imageId；{}",Thread.currentThread().getName() ,image.getId());
                 String url = image.getImageLink() + "?imageInfo";
                 Long id = image.getId();
                 try {
@@ -234,7 +218,7 @@ public class MeiZiPictureController {
                         pictureType = 0;
                     }
 
-                    Image newImage = Image.builder().width(width + "").height(height + "").pictureType(10).build();
+                    Image newImage = Image.builder().width(width + "").height(height + "").pictureType(pictureType).build();
 
                     imageHandleMapper.update(newImage, new UpdateWrapper<Image>().lambda().eq(Image::getId, id));
                 } catch (Exception e) {
@@ -245,30 +229,7 @@ public class MeiZiPictureController {
                 log.info("cache value is null...");
             }
         }
-    }
-
-    private void executeCache3(List<Image> expressionCacheDtoList, int pageNumber, int pageCount, int pageSize,
-                               int executeNumber) {
-
-//        当前执行thread
-        int threadCount = pageCount % pageSize == ConstantNumber.ZERO ? pageCount / pageSize
-                : pageCount / pageSize + ConstantNumber.ONE;
-
-        int startNum = executeNumber - pageSize;
-        if (threadCount == 1) {
-            startNum = 0;
-        }
-        //末页
-        if (threadCount == pageNumber) {
-            executeNumber = pageCount ;
-        }
-
-        for (int j = startNum; j < executeNumber; j++) {
-            Image image = expressionCacheDtoList.get(j);
-            log.info("{}执行线程成功,imageId:{}", Thread.currentThread().getName(), image.getId());
-        }
-
-
+        log.info("线程：{},执行任务数：{}", Thread.currentThread().getName(), finalNumber - startNum);
     }
 
 
