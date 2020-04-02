@@ -20,6 +20,7 @@ public class MeiziTuPictureResponseVo {
     public String collectionName;
     public String collectionSum;
     public String pictureSum;
+    public Integer pictureType;
 
 
 }

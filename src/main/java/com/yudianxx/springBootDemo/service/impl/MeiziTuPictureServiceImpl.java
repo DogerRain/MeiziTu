@@ -56,6 +56,13 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     @Autowired
     CollectionMapper collectionMapper;
 
+    /**
+     *
+     *  根据条件返回image信息
+     *
+     * @param meiziTuPictureRequestVo
+     * @return
+     */
 
     public PageInfo getCompleteImagesByPages(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
         //redis里面查询，没有再往数据库里面查询
@@ -119,10 +126,19 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         return pageInfo;
     }
 
+    /**
+     *
+     *  10 个modelId，一个modelId一个imageId图片
+     *
+     * @return
+     */
     public List<MeiziTuPictureResponseVo> getRandomPictures() {
+        //10个随机modelId
         List<Model> modelList = getRandomModel(ConstantUtils.MODEL_RANDOM_COUNT);
         List<MeiziTuPictureResponseVo> resultList = new ArrayList<>();
-        List<MeiziTuPictureResponseVo> listResponse = getRandomPicturesByModel(1, modelList, resultList);
+        int pictureType = Math.random() > 0.5 ? 1 : 0;
+        Map<Integer, Integer> imageIdMap = new HashMap<>();
+        List<MeiziTuPictureResponseVo> listResponse = getRandomPicturesByModel(imageIdMap, pictureType, 1, modelList, resultList);
         return listResponse;
     }
 
@@ -144,10 +160,18 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
      * @Param:
      * @return:
      */
-    public List<MeiziTuPictureResponseVo> getRandomPicturesByModel(int count, List<Model> modelList, List<MeiziTuPictureResponseVo> resultList) {
+    public List<MeiziTuPictureResponseVo> getRandomPicturesByModel(Map<Integer, Integer> imageIdMap, int pictureType, int count, List<Model> modelList, List<MeiziTuPictureResponseVo> resultList) {
         MeiziTuPictureResponseVo meiziTuPictureResponseVo;
+
         for (Model model : modelList) {
-            int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId());
+            int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId(), pictureType);
+
+            if (imageId == 0 || imageIdMap.get(imageId) != null) {
+                //图片没有，跳出循环
+                //已经存在该modelId
+                continue;
+            }
+            imageIdMap.put(imageId, imageId);
             log.info("imageId:{}", imageId);
             Map map = RedisUtil.getKeysValues(imageId + RedisKeyPrefix.REDIS_SPACE + "*");
             String redisValue = "";
@@ -159,7 +183,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
             if (StringUtils.isNotBlank(redisValue)) {
                 meiziTuPictureResponseVo = RedisUtil.parseJson(redisValue, MeiziTuPictureResponseVo.class);
             } else {
-                PictureModel pictureModel = PictureModel.builder().imageId(imageId+"").build();
+                PictureModel pictureModel = PictureModel.builder().imageId(imageId + "").build();
 
                 meiziTuPictureResponseVo = imageHandleMapper.getCompletesImagesByCondition(pictureModel).get(0);
             }
@@ -168,7 +192,8 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         int needCount = constantUtils.MODEL_RANDOM_COUNT * constantUtils.IMAGES_RANDOM_COUNT - resultList.size();
         if (needCount > 0) {
             log.info("进入递归，正在补全图片，需要补全 {} 张图片", needCount);
-            getRandomPicturesByModel(count++, getRandomModel(needCount), resultList);
+            //modelId需要重新选取
+            getRandomPicturesByModel(imageIdMap, pictureType, count++, getRandomModel(needCount), resultList);
             if (count >= 3) {
                 log.info("超过3次还没补全，退出递归");
                 return resultList;
@@ -199,6 +224,15 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         PageHelper.startPage(meiziTuPictureRequestVo.getPageNum(), meiziTuPictureRequestVo.getPageSize());
         PageInfo pageInfo = new PageInfo(modelMapper.getModelImagesRank());
         return pageInfo;
+    }
+
+
+
+    public List<MeiziTuPictureResponseVo> getBannerPictures(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        if (StringUtils.isBlank(meiziTuPictureRequestVo.getPictureType())) {
+            meiziTuPictureRequestVo.setPictureType("1");
+        }
+        return imageHandleMapper.getBannerPictures(meiziTuPictureRequestVo);
     }
 
 }

@@ -17,16 +17,13 @@ public interface ImageHandleMapper extends BaseMapper<Image> {
 
     List<MeiziTuPictureResponseVo> getCompletesImagesByCondition(PictureModel pictureModel);
 
-//    List<MeiziTuPictureResponseVo> getAllPicture(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
+    List<MeiziTuPictureResponseVo> getBannerPictures(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
 
     List<MeiziTuPictureResponseVo> getRandomPictureByModelId(Long modelid, int count);
 
 
-    Integer getOneRandomPicturesIdByModeId(Long modelid);
-
-    List<MeiziTuPictureResponseVo> getCompletePictureNotinclude(List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList, int count);
-
+    Integer getOneRandomPicturesIdByModeId(Long modelid,int pictureType);
 
     MeiziTuPictureResponseVo getModelHomeBackgroundInfo(String modelId);
 

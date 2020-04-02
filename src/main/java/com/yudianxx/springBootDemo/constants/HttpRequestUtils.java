@@ -19,22 +19,24 @@ public class HttpRequestUtils {
 
     /**
      * httpPost
-     * @param url  路径
+     *
+     * @param url       路径
      * @param jsonParam 参数
      * @return
      */
-    public static JSONObject httpPost(String url, JSONObject jsonParam){
+    public static JSONObject httpPost(String url, JSONObject jsonParam) {
         return httpPost(url, jsonParam, false);
     }
 
     /**
      * post请求
-     * @param url         url地址
-     * @param jsonParam     参数
-     * @param noNeedResponse    不需要返回结果
+     *
+     * @param url            url地址
+     * @param jsonParam      参数
+     * @param noNeedResponse 不需要返回结果
      * @return
      */
-    public static JSONObject httpPost(String url,JSONObject jsonParam, boolean noNeedResponse){
+    public static JSONObject httpPost(String url, JSONObject jsonParam, boolean noNeedResponse) {
         //post请求返回结果
         DefaultHttpClient httpClient = new DefaultHttpClient();
         JSONObject jsonResult = null;
@@ -73,10 +75,11 @@ public class HttpRequestUtils {
 
     /**
      * 发送get请求
-     * @param url    路径
+     *
+     * @param url 路径
      * @return
      */
-    public static JSONObject httpGet(String url){
+    public static JSONObject httpGet(String url) {
         //get请求返回结果
         JSONObject jsonResult = null;
         try {

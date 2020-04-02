@@ -29,4 +29,6 @@ public interface MeiztuPictureService {
 
     PageInfo getModelImagesRank(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
+    List<MeiziTuPictureResponseVo> getBannerPictures(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
+
 }
