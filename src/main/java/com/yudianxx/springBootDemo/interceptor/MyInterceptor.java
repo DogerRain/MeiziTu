@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yudianxx.springBootDemo.annotation.DisableAuth;
 import com.yudianxx.springBootDemo.model.responseVo.RetResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -28,6 +29,10 @@ public class MyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         log.info("拦截成功");
+
+        //解决跨域问题
+
+
         String token = request.getHeader("set-token");
 
         //使用注解 放行逻辑
@@ -52,6 +57,11 @@ public class MyInterceptor implements HandlerInterceptor {
 
     private void returnJson(HttpServletResponse response, Object object) throws Exception {
         PrintWriter writer = null;
+//        response.addHeader("Access-Control-Allow-Origin", "*");
+//        response.addHeader("Access-Control-Allow-Credentials", "true");
+//        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, HEAD");
+//        response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+//        response.addHeader("Access-Control-Max-Age", "3600");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         JSONObject jsonObj = new JSONObject();
