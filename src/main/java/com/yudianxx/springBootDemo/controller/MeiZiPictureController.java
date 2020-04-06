@@ -156,7 +156,8 @@ public class MeiZiPictureController {
         log.info("Start Loading Expression into redis cache...");
 
         // 查询表达式全量数据
-        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>().lambda().last("limit 8"));
+//        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>().lambda().last("limit 8"));
+        List<Image> imageList = imageHandleMapper.selectList(new QueryWrapper<Image>());
 
         // 校验是否有数据需要加载缓存
         if (CollectionUtils.isEmpty(imageList)) {

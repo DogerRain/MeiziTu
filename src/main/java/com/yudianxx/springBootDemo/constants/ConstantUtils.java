@@ -14,6 +14,6 @@ public class ConstantUtils {
 
     public static int ZERO=0;
     public static int ONE=1;
-    public static int THREAD_SIZE = 3;
+    public static int THREAD_SIZE = 1000;
 
 }
