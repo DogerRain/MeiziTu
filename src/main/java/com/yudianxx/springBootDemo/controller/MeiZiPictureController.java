@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.pagehelper.PageInfo;
+import com.yudianxx.springBootDemo.annotation.DisableAuth;
 import com.yudianxx.springBootDemo.config.redis.RedisUtil;
 import com.yudianxx.springBootDemo.constants.ConstantUtils;
 import com.yudianxx.springBootDemo.constants.HttpRequestUtils;
@@ -46,6 +47,7 @@ public class MeiZiPictureController {
 
 
     @RequestMapping("/test")
+    @DisableAuth
 //    public Object test(@RequestBody User user) {
     public Object test() {
         log.info("小程序接口调入测试");
@@ -68,9 +70,8 @@ public class MeiZiPictureController {
      * @Desc 随机返回5个collection的精选图片
      */
     @RequestMapping("/getBannerImages")
-    public RetResult getBannerImages() {
-
-        return RetResponse.makeOKRsp();
+    public RetResult getBannerImages(@RequestBody MeiziTuPictureRequestVo meiziTuPictureRequestVo) {
+        return RetResponse.makeOKRsp(meiztuPictureService.getBannerPictures(meiziTuPictureRequestVo));
     }
 
     /**
@@ -212,6 +213,7 @@ public class MeiZiPictureController {
 
                     int width = Integer.parseInt(imageResponse.getWidth());
                     int height = Integer.parseInt(imageResponse.getHeight());
+                    //默认横
                     int pictureType = 1;
 
                     if (width < height) {
@@ -232,6 +234,5 @@ public class MeiZiPictureController {
         }
         log.info("线程：{},执行任务数：{}", Thread.currentThread().getName(), finalNumber - startNum);
     }
-
 
 }

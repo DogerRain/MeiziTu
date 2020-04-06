@@ -18,4 +18,5 @@ public class MeiziTuPictureRequestVo extends PageObject {
     String categoryName;
     String collectionId;
     String collectionName;
+    String pictureType;
 }

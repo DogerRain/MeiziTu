@@ -118,6 +118,7 @@ public class ICacheService {
 //                        .append(expressionTypeId);
 
                 //key生成规则
+                // imageId+modelId+collectionId
                 String keys = imageId + RedisKeyPrefix.REDIS_SPACE + modelId + RedisKeyPrefix.REDIS_SPACE + collectionId;
 
                 // 存入缓存

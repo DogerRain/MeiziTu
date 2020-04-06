@@ -28,4 +28,9 @@ public class RetResponse {
     public static <T> RetResult<T> makeRsp(int code, String msg, T data) {
         return new RetResult<T>().setCode(code).setMsg(msg).setData(data);
     }
+
+    public static <T> RetResult<T> makeUnKnowRsp() {
+        return new RetResult<T>().setCode(RetCode.INTERNAL_SERVER_ERROR).setMsg(FAIL);
+    }
+
 }
