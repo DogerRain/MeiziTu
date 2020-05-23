@@ -45,7 +45,8 @@
         tc.NAME AS collectionName,
         tc.id AS collectionId,
         tca.id AS catogoryId,
-        tca.NAME AS catogoryName
+        tca.NAME AS catogoryName,
+        ti.picture_type AS pictureType
 
         FROM
         t_images ti
@@ -151,16 +152,21 @@ GROUP BY
         LEFT JOIN t_category tca ON tca.id = ti.category
         WHERE
         1 =1
-				AND tm.id = #{modelid}
+				AND tm.id = #{modelId}
 				AND ti.id >=
-				FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid}))
+				FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelId}))
 				LIMIT #{count};
     </select>
 
-    <select id="getOneRandomPicturesIdByModeId" resultType="java.lang.Integer">
-    SELECT IFNULL(FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelid} AND suggestion='PASS'
+  <!--  <select id="getOneRandomPicturesIdByModeId" resultType="java.lang.Long">
+    SELECT IFNULL(FLOOR((SELECT ((MAX(id)-MIN(id)+1)*RAND()+MIN(id)) FROM t_images WHERE model_id =#{modelId} AND suggestion='PASS'
     AND picture_type =#{pictureType}
     )),0)
+    </select> -->
+
+    <select id="getOneRandomPicturesIdByModeId" resultType="java.lang.Long">
+  	SELECT id FROM t_images WHERE model_id =#{modelId} AND suggestion='PASS'
+    AND picture_type =#{pictureType}
     </select>
 
 

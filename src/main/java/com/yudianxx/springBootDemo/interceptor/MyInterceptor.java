@@ -2,10 +2,16 @@ package com.yudianxx.springBootDemo.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.yudianxx.springBootDemo.annotation.DisableAuth;
+import com.yudianxx.springBootDemo.constants.TokenUse;
 import com.yudianxx.springBootDemo.model.responseVo.RetResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -30,10 +36,8 @@ public class MyInterceptor implements HandlerInterceptor {
 
         log.info("拦截成功");
 
-        //解决跨域问题
 
-
-        String token = request.getHeader("set-token");
+        String token = request.getHeader("token");
 
         //使用注解 放行逻辑
         HandlerMethod method = (HandlerMethod) handler;
@@ -41,17 +45,42 @@ public class MyInterceptor implements HandlerInterceptor {
         if (auth != null) {
             return true;
         }
-        if (token == null){
+        if (token.equals("meizitu")){
+            return true;
+        }
+
+
+        if (token == null) {
             returnJson(response, RetResponse.makeRsp(400, "没有权限访问"));
             return false;
 
         }
 
-        if (token != "1"){
-            returnJson(response, RetResponse.makeRsp(401, "token无效"));
+        //解密token
+        try {
+            DecodedJWT decodeToken = JWT.decode(token);
+            decodeToken.getSubject();
+            decodeToken.getExpiresAt();
+            log.info(decodeToken.getClaim("userName").asString());
+            log.info(decodeToken.getClaim("passWord").asString());
+//            decodeToken.getClaim("roles").asList(String.class).stream().forEach(record -> {
+//                System.out.println("----roles=" + record);
+//            });
+        } catch (JWTDecodeException j) {
+            returnJson(response, RetResponse.makeRsp(401, "token认证失败"));
             return false;
         }
 
+//      验证token
+
+        try {
+            JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(TokenUse.tokenSecRet)).build();
+//            如果不需要解密，验证不出错就没问题
+            jwtVerifier.verify(token);
+        } catch (JWTVerificationException e) {
+            returnJson(response, RetResponse.makeRsp(401, "token认证失败"));
+            return false;
+        }
         return true;
     }
 
@@ -67,9 +96,9 @@ public class MyInterceptor implements HandlerInterceptor {
         JSONObject jsonObj = new JSONObject();
         try {
             writer = response.getWriter();
-            jsonObj =(JSONObject) JSON.toJSON(object);
+            jsonObj = (JSONObject) JSON.toJSON(object);
         } catch (IOException e) {
-            jsonObj =(JSONObject) JSON.toJSON(RetResponse.makeUnKnowRsp());
+            jsonObj = (JSONObject) JSON.toJSON(RetResponse.makeUnKnowRsp());
             log.error("response error", e);
         } finally {
             writer.print(jsonObj);

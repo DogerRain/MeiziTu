@@ -23,10 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author huangyongwen
@@ -57,8 +54,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     CollectionMapper collectionMapper;
 
     /**
-     *
-     *  根据条件返回image信息
+     * 根据条件返回image信息
      *
      * @param meiziTuPictureRequestVo
      * @return
@@ -127,8 +123,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
     }
 
     /**
-     *
-     *  10 个modelId，一个modelId一个imageId图片
+     * 10 个modelId，一个modelId一个imageId图片
      *
      * @return
      */
@@ -164,7 +159,18 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         MeiziTuPictureResponseVo meiziTuPictureResponseVo;
 
         for (Model model : modelList) {
-            int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId(), pictureType);
+            //选择随机一张图片，但是一定要指定pictureType
+//            int imageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId(), pictureType);
+            List<Long> listImageId = imageHandleMapper.getOneRandomPicturesIdByModeId(model.getId(), pictureType);
+
+            if (listImageId.size() == 0) {
+                continue;
+            }
+
+            //产生[ 0,listImageId.size() ) 的下标。
+            int index = (int) (Math.random() * listImageId.size());
+
+            int imageId = (int) listImageId.get(index).longValue();
 
             if (imageId == 0 || imageIdMap.get(imageId) != null) {
                 //图片没有，跳出循环
@@ -176,7 +182,7 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
             Map map = RedisUtil.getKeysValues(imageId + RedisKeyPrefix.REDIS_SPACE + "*");
             String redisValue = "";
             for (Object v : map.values()) {
-                System.out.println("value= " + v);
+//                System.out.println("value= " + v);
                 redisValue = v.toString();
             }
             log.info("redis 取值 redisValue：{}", redisValue);
@@ -225,7 +231,6 @@ public class MeiziTuPictureServiceImpl implements MeiztuPictureService {
         PageInfo pageInfo = new PageInfo(modelMapper.getModelImagesRank());
         return pageInfo;
     }
-
 
 
     public List<MeiziTuPictureResponseVo> getBannerPictures(MeiziTuPictureRequestVo meiziTuPictureRequestVo) {

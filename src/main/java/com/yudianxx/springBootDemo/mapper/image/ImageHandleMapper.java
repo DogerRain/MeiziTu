@@ -5,6 +5,7 @@ import com.yudianxx.springBootDemo.model.image.Image;
 import com.yudianxx.springBootDemo.model.requestVo.MeiziTuPictureRequestVo;
 import com.yudianxx.springBootDemo.model.requestVo.PictureModel;
 import com.yudianxx.springBootDemo.model.responseVo.MeiziTuPictureResponseVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,10 +21,11 @@ public interface ImageHandleMapper extends BaseMapper<Image> {
     List<MeiziTuPictureResponseVo> getBannerPictures(MeiziTuPictureRequestVo meiziTuPictureRequestVo);
 
 
-    List<MeiziTuPictureResponseVo> getRandomPictureByModelId(Long modelid, int count);
+    List<MeiziTuPictureResponseVo> getRandomPictureByModelId(long modelId, int count);
 
 
-    Integer getOneRandomPicturesIdByModeId(Long modelid,int pictureType);
+    List<Long> getOneRandomPicturesIdByModeId(@Param("modelId")long modelId, @Param("pictureType") int pictureType);
+//    Integer getOneRandomPicturesIdByModeId( long modelId, int pictureType);
 
     MeiziTuPictureResponseVo getModelHomeBackgroundInfo(String modelId);
 

@@ -21,6 +21,10 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
         return new MyInterceptor();
     }
 
+    /**
+     *  springboot初始化会进入这个方法，这里定义的url规则，Interceptor不会拦截
+     * @param registry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         /*调用我们创建的SessionInterceptor。
@@ -35,10 +39,10 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
 
 
         //登录不要拦截噢
-        log.info("进入自定义拦截器");
+        log.info(" 拦截器 初始化");
         MyInterceptor sessionInterceptor = new MyInterceptor();
         registry.addInterceptor(sessionInterceptor).addPathPatterns("/**")
-                .excludePathPatterns("/userAPI/login", "/css/**", "/js/**", "/img/**", "/mapper/**");
+                .excludePathPatterns("/userAPI/**", "/css/**", "/js/**", "/img/**", "/mapper/**");
 
 //        registry.addInterceptor(sessionInterceptor).excludePathPatterns("/login");
 //        registry.addInterceptor(sessionInterceptor).excludePathPatterns("/verify");

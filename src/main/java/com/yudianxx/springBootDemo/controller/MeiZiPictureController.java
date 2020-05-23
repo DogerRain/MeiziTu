@@ -123,6 +123,7 @@ public class MeiZiPictureController {
      * @return
      * @throws Exception
      */
+    @DisableAuth
     @RequestMapping("/getRandomPictures")
     public RetResult getRandomPictures() throws Exception {
         List<MeiziTuPictureResponseVo> meiziTuPictureResponseVoList = new ArrayList<>();
